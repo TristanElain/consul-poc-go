@@ -16,3 +16,5 @@
 # Eclipse settings
 .settings
 .project
+
+pkg/
