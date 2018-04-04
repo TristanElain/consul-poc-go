@@ -2,11 +2,11 @@ package provider
 
 import (
 	"encoding/json"
-
+	"fmt"
 	"github.com/hashicorp/consul/api"
 )
 
-// PropertiesProvider - Provide function to popultate properties from Consul
+// PropertiesProvider - Provide functions to interact with consul Consul
 type PropertiesProvider struct {
 	client *api.Client
 }
@@ -19,7 +19,9 @@ func (provider *PropertiesProvider) GetProperties(key string, queryOptions *api.
 	if err != nil {
 		return err
 	}
-
+	if kvPair == nil {
+		return fmt.Errorf("No value for key '%s'\n", key)
+	}
 	err = json.Unmarshal(kvPair.Value, propsStruct)
 	if err != nil {
 		return err
@@ -30,16 +32,18 @@ func (provider *PropertiesProvider) GetProperties(key string, queryOptions *api.
 // GetPropertiesMap - Return properties as a map[string]interface
 func (provider *PropertiesProvider) GetPropertiesMap(key string, queryOptions *api.QueryOptions) (map[string]interface{}, error) {
 	kv := provider.client.KV()
+	props := make(map[string]interface{}, 2)
 
 	kvPair, _, err := kv.Get(key, queryOptions)
 	if err != nil {
-		return nil, err
+		return props, err
 	}
-
-	props := make(map[string]interface{}, 2)
+	if kvPair == nil {
+		return props, fmt.Errorf("No value for key '%s'\n", key)
+	}
 	err = json.Unmarshal(kvPair.Value, &props)
 	if err != nil {
-		return nil, err
+		return props, err
 	}
 	return props, nil
 }

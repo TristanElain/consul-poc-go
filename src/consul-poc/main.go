@@ -13,6 +13,7 @@ func main() {
 
 	http.HandleFunc("/", baseController.HandleRoot)
 	http.HandleFunc("/map", baseController.HandleMapProps)
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusOK) })
 
 	fmt.Println("listening on port 4000")
 	err := http.ListenAndServe("localhost:4000", nil)

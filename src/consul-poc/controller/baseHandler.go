@@ -11,7 +11,7 @@ import (
 // BaseController -
 type BaseController struct{}
 
-const tplDir = "templates/"
+const tplDir string = "templates/"
 
 // HandleRoot - handle root request
 func (controller *BaseController) HandleRoot(w http.ResponseWriter, r *http.Request) {
