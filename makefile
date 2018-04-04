@@ -32,6 +32,8 @@ run:
 		./$(BINARY_NAME)
 
 # Cross compilation
-build-linux: export CGO_ENABLED=0 export GOOS=linux export GOARCH=amd64
+build-linux: export CGO_ENABLED=0
+build-linux: export GOARCH=arm
+build-linux: export GOOS=linux
 build-linux: 
 	$(GOBUILD) -o $(GOBIN)\$(BINARY_UNIX) -v -i $(GOPROJECT)
