@@ -2,6 +2,7 @@ package provider
 
 import (
 	"github.com/hashicorp/consul/api"
+	"sync"
 )
 
 type ConsulProvider struct {
@@ -18,12 +19,18 @@ func (provider *ConsulProvider) GetConsulKV() *api.KV {
 	return provider.client.KV()
 }
 
+var consulProvider *ConsulProvider
+var onceConsul sync.Once
+
 // NewConsulProvider - return a newly created structure
-func NewConsulProvider() (*ConsulProvider, error) {
-	// Default consul configuration address : "http://127.0.0.1:8500"
-	client, err := api.NewClient(api.DefaultConfig())
-	if err != nil {
-		return nil, err
-	}
-	return &ConsulProvider{client}, nil
+func GetConsulProvider() *ConsulProvider {
+	onceConsul.Do(func() {
+		// Default consul configuration address : "http://127.0.0.1:8500"
+		client, err := api.NewClient(api.DefaultConfig())
+		if err != nil {
+			panic(err)
+		}
+		consulProvider = &ConsulProvider{client}
+	})
+	return consulProvider
 }

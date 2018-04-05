@@ -1,9 +1,10 @@
-package registering
+package manager
 
 import (
 	"consul-poc/provider"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"sync"
 	"time"
 )
 
@@ -70,12 +71,14 @@ func (manager *ConsulServiceManager) IsServiceNameRegistered(name string) (bool,
 	return false, nil
 }
 
-func NewConsulServiceManager() (*ConsulServiceManager, error) {
-	client, err := provider.NewConsulProvider()
-	if err != nil {
-		return nil, err
-	}
+var consulServiceManager *ConsulServiceManager
+var onceServiceManager sync.Once
 
-	agent := client.GetConsulAgent()
-	return &ConsulServiceManager{agent}, nil
+func GetConsulServiceManager() *ConsulServiceManager {
+	onceServiceManager.Do(func() {
+		consulProvider := provider.GetConsulProvider()
+		agent := consulProvider.GetConsulAgent()
+		consulServiceManager = &ConsulServiceManager{agent}
+	})
+	return consulServiceManager
 }

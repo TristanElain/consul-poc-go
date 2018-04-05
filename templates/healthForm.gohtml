@@ -1,0 +1,12 @@
+<html>
+    <head></head>
+    <body>
+    	<p>actual health : {{ . }}</p>
+        <form action="" method="post">
+			<input type="radio" name="health" value="true" {{if eq . true }} checked {{ end }}/> OK<br />
+			<input type="radio" name="health" value="false"{{if ne . true }} checked {{ end }}/> KO<br />
+			<br />
+  			<input type="submit" />
+        </form>
+    </body>
+</html>

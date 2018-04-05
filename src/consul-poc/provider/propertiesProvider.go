@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/consul/api"
+	"sync"
 )
 
 // PropertiesProvider - Provide functions to interact with consul Consul
@@ -45,14 +46,16 @@ func (provider *PropertiesProvider) GetPropertiesMap(key string, queryOptions *a
 	return props, nil
 }
 
-// NewPropertiesProvider - return a new created structure
-func NewPropertiesProvider() (*PropertiesProvider, error) {
-	// Default consul configuration address : "http://127.0.0.1:8500"
-	consulProvider, err := NewConsulProvider()
-	if err != nil {
-		return nil, err
-	}
+var propertiesProvider *PropertiesProvider
+var onceProps sync.Once
 
-	kv := consulProvider.GetConsulKV()
-	return &PropertiesProvider{kv}, nil
+// GetPropertiesProvider - return the properties provider
+func GetPropertiesProvider() *PropertiesProvider {
+	onceProps.Do(func() {
+		consulProvider := GetConsulProvider()
+		kv := consulProvider.GetConsulKV()
+		propertiesProvider = &PropertiesProvider{kv}
+	})
+
+	return propertiesProvider
 }
