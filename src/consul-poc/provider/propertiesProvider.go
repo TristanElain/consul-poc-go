@@ -8,14 +8,12 @@ import (
 
 // PropertiesProvider - Provide functions to interact with consul Consul
 type PropertiesProvider struct {
-	client *api.Client
+	kv *api.KV
 }
 
 // GetProperties - Populate `propsStruct` with properties stored at `key`
 func (provider *PropertiesProvider) GetProperties(key string, queryOptions *api.QueryOptions, propsStruct interface{}) error {
-	kv := provider.client.KV()
-
-	kvPair, _, err := kv.Get(key, queryOptions)
+	kvPair, _, err := provider.kv.Get(key, queryOptions)
 	if err != nil {
 		return err
 	}
@@ -31,10 +29,9 @@ func (provider *PropertiesProvider) GetProperties(key string, queryOptions *api.
 
 // GetPropertiesMap - Return properties as a map[string]interface
 func (provider *PropertiesProvider) GetPropertiesMap(key string, queryOptions *api.QueryOptions) (map[string]interface{}, error) {
-	kv := provider.client.KV()
 	props := make(map[string]interface{}, 2)
 
-	kvPair, _, err := kv.Get(key, queryOptions)
+	kvPair, _, err := provider.kv.Get(key, queryOptions)
 	if err != nil {
 		return props, err
 	}
@@ -51,9 +48,11 @@ func (provider *PropertiesProvider) GetPropertiesMap(key string, queryOptions *a
 // NewPropertiesProvider - return a new created structure
 func NewPropertiesProvider() (*PropertiesProvider, error) {
 	// Default consul configuration address : "http://127.0.0.1:8500"
-	client, err := api.NewClient(api.DefaultConfig())
+	consulProvider, err := NewConsulProvider()
 	if err != nil {
 		return nil, err
 	}
-	return &PropertiesProvider{client}, nil
+
+	kv := consulProvider.GetConsulKV()
+	return &PropertiesProvider{kv}, nil
 }

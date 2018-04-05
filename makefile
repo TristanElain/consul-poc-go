@@ -25,11 +25,11 @@ test:
 		$(GOTEST) -v ./...
 clean: 
 		$(GOCLEAN)
-		del /F $(GOBIN)\$(BINARY_NAME).exe
-		del /F $(GOBIN)\$(BINARY_UNIX)
+		rm -f $(GOBIN)\$(BINARY_NAME).exe
+		rm -f $(GOBIN)\$(BINARY_UNIX)
 run:
-		$(GOBUILD) -o $(BINARY_NAME) -v ./...
-		./$(BINARY_NAME)
+		build
+		start bin/$(BINARY_NAME)
 
 # Cross compilation
 build-linux: export CGO_ENABLED=0
