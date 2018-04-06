@@ -22,9 +22,9 @@ func main() {
 
 	// Registering to consul
 	serviceManager.RegisterService("webservice-go", 4000)
-	// serviceManager.DeregisterService("webservice-go-1522936919")
+	//serviceManager.DeregisterService("webservice-go-1522937101")
 
 	fmt.Println("listening on port 4000")
-	err := http.ListenAndServe("localhost:4000", nil)
+	err := http.ListenAndServe(":4000", nil)
 	utils.FatalError(err)
 }
