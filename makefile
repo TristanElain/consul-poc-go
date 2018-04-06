@@ -37,3 +37,4 @@ build-linux: export GOARCH=arm
 build-linux: export GOOS=linux
 build-linux: 
 	$(GOBUILD) -o $(GOBIN)\$(BINARY_UNIX) -v -i $(GOPROJECT)
+	zip bin/templates.zip templates
